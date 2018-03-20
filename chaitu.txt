@@ -1,0 +1,132 @@
+package com.customer.info;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Menu {
+
+	public static void main(String[] args) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:SYSTEM","system","root");
+		Statement st = con.createStatement();
+		ResultSet rs = null;
+int ch;
+int cust_no,ph_no;
+String cname,addr;
+Scanner scan = new Scanner(System.in);
+try{
+do{
+	
+	System.out.println("1. View");
+	System.out.println("2. Insert");
+	System.out.println("3. Delete");
+	System.out.println("4. Update");
+	System.out.println("5. Exit");
+	ch = scan.nextInt();
+	switch(ch){
+	case 1:
+		System.out.println("Viewed");
+		
+		
+		String q = "select *from customer1039";
+		rs = st.executeQuery(q);
+		while(rs.next()){
+			System.out.print(rs.getInt(1)+"\t");
+			System.out.print(rs.getString(2)+"\t");
+			System.out.print(rs.getString(3)+"\t");
+			System.out.print(rs.getString(4));
+			System.out.println();
+		}
+	    break ;
+		
+	case 2:
+		System.out.println("Inserted");
+		
+		System.out.println("Enter the cust no");
+		cust_no = scan.nextInt();
+		System.out.println("Enter the cname");
+		cname = scan.next();
+		System.out.println("Enter the addr");
+		addr = scan.next();
+		System.out.println("Enter the phno");
+		ph_no = scan.nextInt();
+
+
+		
+		String r = "Insert into customer1039 values(?,?,?,?)";
+		PreparedStatement ps = con.prepareStatement(r);
+		ps.setInt(1,cust_no);
+		ps.setString(2,cname);
+		ps.setString(3,addr);
+		ps.setInt(4,ph_no);
+		int i = ps.executeUpdate();
+		if(i!=0){
+			
+			String p = "select *from customer1039";
+			 rs = st.executeQuery(p);
+			while(rs.next()){
+				System.out.print(rs.getInt(1)+"\t");
+				System.out.print(rs.getString(2)+"\t");
+				System.out.print(rs.getString(3)+"\t");
+				System.out.print(rs.getString(4));
+				System.out.println();
+				
+				
+			}
+			
+		}
+		break ;
+	case 3:
+		System.out.println("Deleted");
+		
+		
+		System.out.println("ENter the cust_no");
+		cust_no = scan.nextInt();
+
+
+		
+		String t = "delete from customer1039 where cust_no = ? ";
+		PreparedStatement ps1 = con.prepareStatement(t);
+		ps1.setInt(1,cust_no);
+		int i1 = ps1.executeUpdate();
+		if(i1!=0){
+			System.out.println("deleted");
+		}
+		break;
+	case 4:
+		System.out.println("Updated");
+		
+		
+		System.out.println("Enter cust_no");
+		cust_no = scan.nextInt();
+		System.out.println("Enter addr");
+		addr = scan.next();
+
+		
+		String p = "Update customer1039 set addr = ? where cust_no = ?";
+		PreparedStatement ps2 = con.prepareStatement(p);
+		ps2.setString(1,addr);
+		ps2.setInt(2,cust_no);
+		int i2 = ps2.executeUpdate();
+		if(i2!=0){
+		System.out.println("updated");
+		}
+		break;
+	case 5:
+		System.exit(0);
+	}
+}while(ch<5);
+}finally{
+	con.close();
+	st.close();
+	rs.close();
+}
+		
+	}
+}
